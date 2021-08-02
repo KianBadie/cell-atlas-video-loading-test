@@ -1,0 +1,1 @@
+Simple test to see how Google Search console will react to different types of video loading.

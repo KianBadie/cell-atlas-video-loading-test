@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <body>
+        <h1>Source hard-coded</h1>
+        <video id="hardcoded" width="500px" preload="metadata" controls data-src="https://www.cellstructureatlas.org/videos/1_10_Bbacteriovorus.mp4">
+            <source src="">
+        </video>
+
+        <h1>Source dynamic</h1>
+        <video id="dynamic" width="500px" preload="metadata" controls data-doi="10.22002/D1.1472">
+            <source src="">
+        </video>
+
+        <script>
+            let startTime = Date.now();
+            let videos = document.getElementsByTagName("video");
+            for(let video of videos) {
+                video.addEventListener("loadedmetadata", () => console.log(`${video.id} loadedmetadata: ${(Date.now() - startTime) / 1000}s`));
+            }
+
+            // Dynamic stuff
+            let dynamicVid = document.getElementById("dynamic");
+            let dynamicSrc = dynamicVid.querySelector("source");
+            fetch(`https://api.datacite.org/dois/${dynamicVid.getAttribute("data-doi")}/media`)
+            .then(res => res.json())
+            .then(data => {
+                dynamicSrc.setAttribute("src", data.data[0].attributes.url);
+                dynamicVid.load();
+            });
+
+            // Hardcoded stuff
+            let hardcodedVid = document.getElementById("hardcoded");
+            let hardcodedSrc = hardcodedVid.querySelector("source");
+            hardcodedSrc.setAttribute("src", hardcodedVid.getAttribute("data-src"));
+        </script>
+    </body>
+</html>
